@@ -1,5 +1,5 @@
 from os import walk, makedirs, chdir
-from os.path import join, basename, dirname
+from os.path import join, basename, dirname, isfile
 from subprocess import run
 from csv import DictReader
 from statistics import mean
@@ -24,7 +24,7 @@ def convert_data(orig_dirs, time, converter):
     for child, grandchildren in orig_dirs["children"].items():
         print(f"Inside {child} directory...")
         for grandchild in grandchildren:
-            print(f"\t--> Inside {grandchild} directory...")
+            print(f"\t> Inside {grandchild} directory...")
             for root, _, files in walk(join(orig_dirs["parent"],
                                             child,
                                             grandchild)):
@@ -36,7 +36,6 @@ def convert_data(orig_dirs, time, converter):
                                    basename(root))
                     makedirs(new_dir, exist_ok=True)
                     chdir(root)
-
                     # Only convert files for specified time
                     for file in files:
                         if file.endswith(time):
@@ -52,17 +51,29 @@ def averages(data_dirs, strip_time):
           f"This may take a few minutes...\n{'='*80}")
     strip_time = strip_time.rstrip(".DAT") + ".csv"
     # Walk through directory of converted CSVs
-    for root, _, files in walk(data_dirs):
-        # Where there are files, make a new Excel workbook
+    for root, subs, files in walk(data_dirs):
+        # Where there are files, create new Excel workbook
         if files:
+            # Disregard dirs containing previously compiled Excel workbooks
+            try:
+                if files[0].rstrip(".xlsx") == subs[0]:
+                    continue
+            except IndexError:
+                pass
+            # File naming
             sheet_name = basename(root)
             print(f"Creating workbook for {sheet_name}...")
-            workbook = Workbook(join(dirname(root), sheet_name + ".xlsx"))
+            workbook_path = join(dirname(root), sheet_name + ".xlsx")
+            # Skip dir if Excel workbook already exists
+            if isfile(workbook_path):
+                continue
+            # Workbook config and formatting
+            workbook = Workbook(workbook_path)
             worksheet = workbook.add_worksheet(sheet_name)
-            # Sheet formatting
             worksheet.write_row("A1", ["Date", "Values"])
             date_format = workbook.add_format()
             date_format.set_num_format("yyyy mm dd")
+            # Iterate through .CSV files in dir
             for row_num, file in enumerate(files, start=1):
                 # Add date to worksheet
                 worksheet.write(row_num, 0, file.rstrip(strip_time),
