@@ -1,4 +1,4 @@
-from os import walk, makedirs, chdir
+from os import listdir, walk, makedirs, chdir
 from os.path import join, basename, dirname, isfile
 from subprocess import run
 from csv import DictReader
@@ -7,8 +7,9 @@ from xlsxwriter import Workbook
 
 
 # Compile list of all directories with relevant data
-def compile_dirs(parent_dir, relevant_child, relevant_grandchild):
+def compile_dirs(parent_dir, relevant_grandchild):
     compiled_dirs = {"parent": parent_dir, "children": {}}
+    relevant_child = listdir(parent_dir)
     for child in relevant_child:
         compiled_dirs["children"][child] = []
         for grandchild in relevant_grandchild:

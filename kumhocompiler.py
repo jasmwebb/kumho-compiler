@@ -2,34 +2,35 @@
 # large volumes of data. It is intended for use only by Kumho Eng, Inc.
 
 from os import listdir
-from glob import glob
+from os.path import abspath
 from helpers import compile_dirs, convert_data, averages
 
-# Config
-# TODO - select folder within cwd
-data_dir = "C:\\Users\\jmweb\\Code\\kumho-compiler\\Data"
-mixers = listdir(data_dir)
+# Config and user input
+ftvfv = abspath("FTViewFileViewer.exe")
+all_dirs = listdir()
 
-# Config - User input
-# target_data = []
-# print("What data will be compiled? ".upper().ljust(80, '='))
-# print("Press ENTER after each entry. Press ENTER again when finished.\n"
-#       + '-'*80)
-# while True:
-#     data_type = input("\t> ").upper()
-#     if not data_type:
-#         break
-#     target_data.append(data_type)
-# print("Data from what time will be compiled? ".upper().ljust(80, '='))
-# print("Enter the hour in 24-hour format (ex: 2 PM is 14, 4 AM is 04),"
-#       " then press ENTER.\n" + '-'*80)
-# target_time = "00" + input("\t> ") + " (Float).DAT"
+print("Which directory contains the data? ".upper().ljust(80, '='))
+for i, dir in enumerate(all_dirs):
+    print(f"{i}: {dir}")
+data_dir = int(input("\t> "))
+data_dir = abspath(all_dirs[data_dir])
 
-# Location of FTView File Viewer (to convert .DAT to .CSV via command line)
-# TODO - way to locate this file without user input
-# ftvfv = ("C:\\Users\\jmweb\\Desktop\\FTViewFileViewer.exe")
-print(glob("**/FTViewFileViewer.exe", recursive=True))
+print("What data will be compiled? ".upper().ljust(80, '='))
+print("Press ENTER after each entry. Press ENTER again when finished.\n"
+      + '-'*80)
+target_data = []
+while True:
+    data_type = input("\t> ").upper()
+    if not data_type:
+        break
+    target_data.append(data_type)
 
-# compiled_dirs = compile_dirs(data_dir, mixers, target_data)
-# converted_dir = convert_data(compiled_dirs, target_time, ftvfv)
-# averages(converted_dir, target_time)
+print("Data from what time will be compiled? ".upper().ljust(80, '='))
+print("Enter the hour in 24-hour format (ex: 2 PM is 14, 4 AM is 04),"
+      " then press ENTER.\n" + '-'*80)
+target_time = "00" + input("\t> ") + " (Float).DAT"
+
+# Automation
+compiled_dirs = compile_dirs(data_dir, target_data)
+converted_dir = convert_data(compiled_dirs, target_time, ftvfv)
+averages(converted_dir, target_time)
