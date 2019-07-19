@@ -7,5 +7,5 @@ It is intended for use only by **Kumho Eng, Inc.** and is written in a way that 
 
 ---
 
-### Dependencies
-[XlsxWriter](https://xlsxwriter.readthedocs.io/) `pip install --user XlsxWriter`
+## Usage
+Place `FTViewFileViewer.exe` and `kumhocompiler` in the same directory (folder) as your data directory.
