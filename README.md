@@ -1,5 +1,5 @@
 This program automates the process of 
-- collecting large volumes of data specified by user,
+- collecting large volumes of data specified by the user,
 - leveraging a client-supplied utility to convert the data files into an easy-to-manipulate format,
 - and compiling tables and graphs from analysis of the data, viewable in Excel.
 
