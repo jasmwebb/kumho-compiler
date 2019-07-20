@@ -7,5 +7,5 @@ It is intended for use only **Kumho Eng, Inc.**, and thus is written in a way th
 
 ---
 
-## Usage
+### Usage
 Place `FTViewFileViewer.exe` and `kumhocompiler` in the same directory (folder) as your data directory.
