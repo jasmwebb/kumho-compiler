@@ -6,8 +6,8 @@ from statistics import mean
 from xlsxwriter import Workbook
 
 
-# Compile list of all directories with relevant data
 def compile_dirs(parent_dir, relevant_grandchild):
+    ''' Compile list of all directories with relevant data '''
     compiled_dirs = {"parent": parent_dir, "children": {}}
     relevant_child = listdir(parent_dir)
     for child in relevant_child:
@@ -17,8 +17,9 @@ def compile_dirs(parent_dir, relevant_grandchild):
     return compiled_dirs
 
 
-# Convert files fitting specified criteria and save to different location
 def convert_data(orig_dirs, time, converter):
+    ''' Convert files fitting specified criteria and save to different
+    location '''
     print("Converting .DAT files to .CSV. "
           f"This may take a few minutes...\n{'='*80}")
     converted_dir = orig_dirs["parent"] + " CSV"
@@ -46,8 +47,8 @@ def convert_data(orig_dirs, time, converter):
     return converted_dir
 
 
-# Create Excel workbooks from averages of all converted data
 def averages(data_dirs, strip_time):
+    ''' Create Excel workbooks from averages of all converted data '''
     print("Averaging data and creating Excel workbooks. "
           f"This may take a few minutes...\n{'='*80}")
     strip_time = strip_time.rstrip(".DAT") + ".csv"
@@ -76,15 +77,15 @@ def averages(data_dirs, strip_time):
             date_format.set_num_format("yyyy mm dd")
             # Iterate through .CSV files in dir
             for row_num, file in enumerate(files, start=1):
-                # Add date to worksheet
-                worksheet.write(row_num, 0, file.rstrip(strip_time),
-                                date_format)
                 # Average first 10 values in file
                 values = []
                 with open(join(root, file), 'r') as data:
                     reader = DictReader(data)
+                    date = next(reader)[";Date"]
                     for row in reader:
                         values.append(float(row["Value"].strip(' ')))
+                # Add date to worksheet
+                worksheet.write(row_num, 0, date, date_format)
                 # Add average to worksheet
                 worksheet.write(row_num, 1, mean(values[:10]))
             # Create chart from data
@@ -93,11 +94,13 @@ def averages(data_dirs, strip_time):
                 "values": [sheet_name, 1, 1, row_num, 1],
                 "categories": [sheet_name, 1, 0, row_num, 0],
                 "name": sheet_name,
-                "marker": {"type": "square"}
+                "marker": {"type": "square"},
+                "data_labels": {"position": "below"}
             })
             chart.set_x_axis({
               "name": "Date",
-              "date_axis": True
+              "date_axis": True,
+              "position_axis": "on_tick"
             })
             chart.set_y_axis({"name": "Value"})
             chart.set_legend({"none": True})

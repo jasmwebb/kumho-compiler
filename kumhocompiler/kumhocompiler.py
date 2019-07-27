@@ -34,3 +34,4 @@ target_time = "00" + input("\t> ") + " (Float).DAT"
 compiled_dirs = compile_dirs(data_dir, target_data)
 converted_dir = convert_data(compiled_dirs, target_time, ftvfv)
 averages(converted_dir, target_time)
+input("\nPress any key to exit.")
