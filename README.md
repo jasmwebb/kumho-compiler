@@ -8,7 +8,7 @@ It is intended for use only by **Kumho Eng, Inc.**, and thus is written in a way
 ## Installation & Usage
 Place `FTViewFileViewer.exe` and `kumhocompiler.exe` in the same directory (folder) as your data directory.
 
-![alt text](https://github.com/jasmwebb/kumho-compiler/blob/master/img/installex.png "Screenshot of an example directory that will utilize the program")
+![alt text](https://github.com/jasmwebb/kumho-compiler/blob/master/img/installexample.png "Screenshot of an example directory that will utilize the program")
 
 Double-click `kumhocompiler.exe`. Follow the on-screen prompts.
 
