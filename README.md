@@ -13,7 +13,7 @@ Place `FTViewFileViewer.exe` and `kumhocompiler.exe` in the same directory (fold
 Double-click `kumhocompiler.exe`. Follow the on-screen prompts.
 
 ## Meta
-Jasmine Webb – https://myportfoliourl – jmwebb.94@gmail.com
+Jasmine Webb – jmwebb.94@gmail.com
 
 Distributed under the MIT license. See `LICENSE.txt` for more information.
 
