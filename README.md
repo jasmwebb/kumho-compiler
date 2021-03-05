@@ -2,6 +2,15 @@ This command-line program automates the process of organizing and synthesizing a
 
 It was intended for use only by **Kumho Eng, Inc.**, and thus was written in a way that is catered to the use of their associates and the developer.
 
+# Usage
+TODO
+
+## To-dos
+- [ ] Prompt user for configuration
+- [ ] Convert relevant DAT to CSV
+- [ ] Calculate averages
+- [ ] Graph out averages
+
 ---
 
 ## History
@@ -13,10 +22,3 @@ In its previous "production" state, the program worked as expected on the small 
 While I was gone, my partner coded his own version, [the repo for which can be found on his GitHub](https://github.com/alpacapetter/kumho-compiler).
 
 The redux that now lives in this repo serves as a final project submission for CS50x 2021 and as a personal reminder to commit to finish the things I start.
-
-
-# Usage
-TODO
-
-# Features
-- []
