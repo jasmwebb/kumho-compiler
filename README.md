@@ -6,10 +6,10 @@ It was intended for use only by **Kumho Eng, Inc.**, and thus was written in a w
 TODO
 
 ## To-dos
-- [ ] Prompt user for configuration
+- [x] Prompt user for configuration
 - [ ] Convert relevant DAT to CSV
-- [ ] Calculate averages
-- [ ] Graph out averages
+- [ ] Calculate averages of each CSV
+- [ ] Graph out averages (x-axis: day/month, y-axis: value)
 
 ---
 

@@ -5,7 +5,7 @@ import unittest
 
 
 class TestSequenceFunctions(unittest.TestCase):
-    """ This is one of potentially many TestCases """
+    """This is one of potentially many TestCases"""
 
     def setUp(self):
         pass
