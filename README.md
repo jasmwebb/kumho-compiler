@@ -7,11 +7,10 @@ TODO
 
 ## To-dos
 - [x] Prompt user for configuration
-- [ ] Convert relevant DAT to CSV
-- [ ] Calculate averages of each CSV
-- [ ] Graph out averages (x-axis: day/month, y-axis: value)
+- [x] Convert relevant DAT to CSV
+- [x] Calculate averages of each CSV
+- [x] Graph out averages (x-axis: day/month, y-axis: value)
 
----
 
 ## History
 
