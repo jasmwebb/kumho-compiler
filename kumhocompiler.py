@@ -120,6 +120,33 @@ def calc_avg(filename):
     return file_date, avg
 
 
+def plot_averages(data, root_dir, dirname, hr):
+    """Plots and saves a time series from given data."""
+    print("\n📏 Plotting data... ")
+
+    # x-axis is the dates (keys), y-axis is the average (values)
+    x, y = zip(*sorted(data.items()))
+
+    # Format hour for title
+    hour = hr if hr <= 12 else hr - 12
+    am_pm = "AM" if hr < 12 else "PM"
+
+    # Style, plot, add information
+    plt.style.use("seaborn-pastel")
+    plt.plot_date(x, y, linestyle="solid")
+    plt.gcf().autofmt_xdate()
+    plt.title(f"{dirname} - {hour} {am_pm} Averages")
+    plt.xlabel("Date")
+    plt.ylabel("Value")
+
+    # Save plot
+    data_items = tuple(data.items())
+    fig_name = f"{dirname} ({data_items[0][0]} {data_items[-1][0]}).png"
+    plt.savefig(os.path.normpath(f"{root_dir}/{fig_name}"))
+
+    print(f"📈 Done!\n💾 {fig_name} saved to {root_dir}")
+
+
 def main():
     """Main entry point"""
 
@@ -136,8 +163,8 @@ def main():
     start_time = time()
 
     # -- Run the commands concurrently
-    # with ThreadPoolExecutor() as executor:
-    #     executor.map(run, cmds)
+    with ThreadPoolExecutor() as executor:
+        executor.map(run, cmds)
 
     print(f"🌼 Done! ({int(time() - start_time)} seconds)")
 
@@ -157,33 +184,9 @@ def main():
     print(f"📋 Done! ({int(time() - start_time)} seconds)")
 
     # PLOT averages
-    print("\n📏 Plotting data... ")
-
-    # -- x-axis is the dates (keys), y-axis is the average (values)
-    x, y = zip(*sorted(data.items()))
-
-    # -- Format hour for title
-    hour = target_hr if target_hr <= 12 else target_hr - 12
-    am_pm = "AM" if target_hr < 12 else "PM"
-
-    # -- Style, plot, add information
-    plt.style.use("seaborn-pastel")
-    plt.plot_date(x, y, linestyle="solid")
-    plt.gcf().autofmt_xdate()
-    plt.title(f"{target_dir} - {hour} {am_pm} Averages")
-    plt.xlabel("Date")
-    plt.ylabel("Value")
-
-    # -- Save plot
-    data_items = tuple(data.items())
-    fig_name = f"{target_dir} ({data_items[0][0]} {data_items[-1][0]}).png"
-
-    os.chdir(os.path.normpath(root))
-    plt.savefig(fig_name)
-
-    print(f"📈 Done!\n💾 {fig_name} saved to {root}")
+    plot_averages(data, root, target_dir, target_hr)
 
 
 if __name__ == "__main__":
-    os.chdir("data")  # DEV
+    # os.chdir("data")  # DEV
     main()
