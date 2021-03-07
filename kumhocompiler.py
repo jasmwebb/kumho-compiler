@@ -3,10 +3,14 @@
 Automates organizing and synthesizing data into meaningful graphs.
 """
 import os
-import time
 
-from concurrent.futures import ThreadPoolExecutor
+from collections import OrderedDict
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from csv import DictReader
+from datetime import date
+from statistics import mean, StatisticsError
 from subprocess import run
+from time import time
 
 
 def configure(dev=False):
@@ -14,8 +18,7 @@ def configure(dev=False):
     if dev:
         os.chdir("data")
 
-
-    def valid_input(user_input, upper_bound):
+    def validate_input(user_input, upper_bound):
         """Validates the user's input."""
         try:
             user_input = int(user_input)
@@ -34,20 +37,19 @@ def configure(dev=False):
 
         return user_input
 
-
     # Configure target directory
-    dirs = tuple(dir for dir in os.listdir()
-                 if os.path.isdir(dir) and not dir.endswith("CSV"))
+    dirs = tuple(_dir for _dir in os.listdir()
+                 if os.path.isdir(_dir) and not _dir.endswith("CSV"))
     target_dir = None
 
     print("\n📁 Select directory to analyze:")
 
-    for i, directory in enumerate(dirs):
-        print(f"\t{i} | {directory}")
+    for i, _dir in enumerate(dirs):
+        print(f"\t{i} | {_dir}")
 
     while target_dir is None:
         ans = input("> ")
-        target_dir = valid_input(ans, len(dirs) - 1)
+        target_dir = validate_input(ans, len(dirs) - 1)
 
     target_dir = dirs[target_dir]
 
@@ -58,17 +60,20 @@ def configure(dev=False):
 
     while target_hr is None:
         ans = input("> ")
-        target_hr = valid_input(ans, 24)
+        target_hr = validate_input(ans, 24)
 
     return target_dir, target_hr
 
 
-def to_csv(dir, hr):
-    """Converts all DAT files containing float values from the given hour
-    within the given directory.
+def convert_setup(dirname, hr):
+    """Creates a directory for the converted files and returns a map object of
+    command line commands used to convert all DAT files within the given
+    directory that contain float values from the given hour.
+    Additionally returns the name of the newly created directiry and the number
+    of files to convert for logging.
     """
     # Create a directory for the converted files if it doesn't already exist
-    csv_dir = f"{dir} CSV"
+    csv_dir = f"{dirname} CSV"
 
     try:
         os.mkdir(csv_dir)
@@ -76,19 +81,16 @@ def to_csv(dir, hr):
         pass
 
     # Go into parent directory of files to convert
-    os.chdir(dir)
+    os.chdir(dirname)
 
     # Format hour if one-digit to avoid capturing unexpected files
     # -- ex: endswith(9) matches 09 and 19
     if hr < 10:
         hr = f"0{hr}"
 
-    files = tuple(file for file in os.listdir() if file.endswith(f"{hr} (Float).DAT"))
-    num_files = len(files)
+    files = tuple(file for file in os.listdir()
+                  if file.endswith(f"{hr} (Float).DAT"))
 
-
-    # Create a list of command line commands to convert the relevant files
-    # into CSV using FTViewFileViewer
     def interpolate_args(filename):
         """Interpolates given filename into list of command line arguments for
         subprocess.run
@@ -99,31 +101,63 @@ def to_csv(dir, hr):
 
         return [ftview, "/sd", filename, dest]
 
+    return map(interpolate_args, files), csv_dir, len(files)
 
-    cmds = map(interpolate_args, files)
 
-    print(f"\n🌱 Converting {num_files} files to CSV... (This may take a minute.)")
+def calc_avg(filename):
+    """Calculates the average of all the values in a given CSV. Returns the
+    CSV's date and the average.
+    """
+    _yyyy, _m, _d, *_ = filename.split()
+    file_date = date(int(_yyyy), int(_m), int(_d))
 
-    # Run the commands concurrently
-    start_time = time.time()
+    with open(filename, "r") as csv_file:
+        reader = DictReader(csv_file)
 
-    with ThreadPoolExecutor() as executor:
-        executor.map(run, cmds)
+        try:
+            avg = mean(float(row["Value"]) for row in reader)
+        except StatisticsError:
+            # Empty CSV
+            avg = 0
 
-    print(f"🌼 Done! ({time.time() - start_time} seconds)")
+    return file_date, avg
 
 
 def main():
     """Main entry point"""
-    
+
     # Configure app
     target_dir, target_hr = configure(True)
 
     # Convert specified files to CSV
-    # to_csv(target_dir, target_hr)
+    cmds, csvs, num_files = convert_setup(target_dir, target_hr)
 
-    # TODO - Calculate average of each CSV
-    
+    print(f"\n🌱 Converting {num_files} files to CSV... "
+          "(This may take a minute.)")
+
+    start_time = time()
+
+    # -- Run the commands concurrently
+    with ThreadPoolExecutor() as executor:
+        executor.map(run, cmds)
+
+    print(f"🌼 Done! ({int(time() - start_time)} seconds)")
+
+    # Calculate average of each CSV
+    os.chdir(os.path.normpath(f"../{csvs}"))
+    csvs = os.listdir()
+
+    print("\n🧮 Calculating averages... ")
+
+    start_time = time()
+
+    with ProcessPoolExecutor() as executor:
+        avgs = executor.map(calc_avg, csvs)
+        data = {_date: _avg for _date, _avg in avgs}
+
+    print(f"📋 Done! ({int(time() - start_time)} seconds)")
+
+    data = OrderedDict(sorted(data.items()))
 
     # TODO - Plot averages
 
