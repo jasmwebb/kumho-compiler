@@ -4,20 +4,17 @@ Automates organizing and synthesizing data into meaningful graphs.
 """
 import os
 
-from collections import OrderedDict
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from csv import DictReader
 from datetime import date
+from matplotlib import pyplot as plt
 from statistics import mean, StatisticsError
 from subprocess import run
 from time import time
 
 
-def configure(dev=False):
+def configure():
     """Configures application to user's needs."""
-    if dev:
-        os.chdir("data")
-
     def validate_input(user_input, upper_bound):
         """Validates the user's input."""
         try:
@@ -42,7 +39,7 @@ def configure(dev=False):
                  if os.path.isdir(_dir) and not _dir.endswith("CSV"))
     target_dir = None
 
-    print("\n📁 Select directory to analyze:")
+    print("📁 Select directory to analyze:")
 
     for i, _dir in enumerate(dirs):
         print(f"\t{i} | {_dir}")
@@ -126,10 +123,11 @@ def calc_avg(filename):
 def main():
     """Main entry point"""
 
-    # Configure app
-    target_dir, target_hr = configure(True)
+    # CONFIGURE app
+    root = os.getcwd()
+    target_dir, target_hr = configure()
 
-    # Convert specified files to CSV
+    # CONVERT specified files to CSV
     cmds, csvs, num_files = convert_setup(target_dir, target_hr)
 
     print(f"\n🌱 Converting {num_files} files to CSV... "
@@ -138,12 +136,12 @@ def main():
     start_time = time()
 
     # -- Run the commands concurrently
-    with ThreadPoolExecutor() as executor:
-        executor.map(run, cmds)
+    # with ThreadPoolExecutor() as executor:
+    #     executor.map(run, cmds)
 
     print(f"🌼 Done! ({int(time() - start_time)} seconds)")
 
-    # Calculate average of each CSV
+    # CALCULATE average of each CSV
     os.chdir(os.path.normpath(f"../{csvs}"))
     csvs = os.listdir()
 
@@ -151,16 +149,41 @@ def main():
 
     start_time = time()
 
+    # -- Calculate concurrently
     with ProcessPoolExecutor() as executor:
         avgs = executor.map(calc_avg, csvs)
         data = {_date: _avg for _date, _avg in avgs}
 
     print(f"📋 Done! ({int(time() - start_time)} seconds)")
 
-    data = OrderedDict(sorted(data.items()))
+    # PLOT averages
+    print("\n📏 Plotting data... ")
 
-    # TODO - Plot averages
+    # -- x-axis is the dates (keys), y-axis is the average (values)
+    x, y = zip(*sorted(data.items()))
+
+    # -- Format hour for title
+    hour = target_hr if target_hr <= 12 else target_hr - 12
+    am_pm = "AM" if target_hr < 12 else "PM"
+
+    # -- Style, plot, add information
+    plt.style.use("seaborn-pastel")
+    plt.plot_date(x, y, linestyle="solid")
+    plt.gcf().autofmt_xdate()
+    plt.title(f"{target_dir} - {hour} {am_pm} Averages")
+    plt.xlabel("Date")
+    plt.ylabel("Value")
+
+    # -- Save plot
+    data_items = tuple(data.items())
+    fig_name = f"{target_dir} ({data_items[0][0]} {data_items[-1][0]}).png"
+
+    os.chdir(os.path.normpath(root))
+    plt.savefig(fig_name)
+
+    print(f"📈 Done!\n💾 {fig_name} saved to {root}")
 
 
 if __name__ == "__main__":
+    os.chdir("data")  # DEV
     main()
