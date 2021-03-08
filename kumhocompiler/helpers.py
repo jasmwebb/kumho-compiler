@@ -120,7 +120,7 @@ def convert_setup(dirname, hr):
     return map(interpolate_args, files), csv_dir, len(files)
 
 
-def plot_averages(data, root_dir, dirname, hr, str_hr):
+def plot_averages(data, root_dir, dirname, hr):
     """Plots and saves a time series from given data."""
     print("\n📏 Plotting data... ")
 
