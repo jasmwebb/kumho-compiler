@@ -52,5 +52,5 @@ def main():
 
 
 if __name__ == "__main__":
-    os.chdir("data")  # DEV
+    # os.chdir("data")  # DEV
     main()
