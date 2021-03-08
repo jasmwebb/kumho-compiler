@@ -3,16 +3,20 @@ This command-line program automates the process of organizing and synthesizing a
 It was intended for use only by **Kumho Eng, Inc.**, and thus was written in a way that was catered to the use of their associates and the developer.
 
 # Usage
+## Install dependencies
+Before running the script, you need to have its dependencies (namely `matplotlib`) installed locally (and preferably in a virtual environment).
+
+From within the same directory containing `requirements.txt` run :
+```
+pip install -r requirements.txt
+```
+
+Alternatively, [follow matplotlib's installation instructions](https://matplotlib.org/stable/users/installing.html).
+
+## Running the script
 1. Ensure `FTViewFileViewer.exe` is in the directory containing all other data directories.
 2. Place the `kumhocompiler` directory inside the same directory.
 3. Run `python kumhocompiler` from within that directory and follow the on-screen prompts.
-
-## To-dos
-- [x] Prompt user for configuration
-- [x] Convert relevant DAT to CSV
-- [x] Calculate averages of each CSV
-- [x] Graph out averages (x-axis: day/month, y-axis: value)
-
 
 ## History
 
@@ -23,3 +27,9 @@ In its previous "production" state, the program worked as expected on the small 
 While I was gone, my partner coded his own version, [the repo for which can be found on his GitHub](https://github.com/alpacapetter/kumho-compiler).
 
 The redux that now lives in this repo serves as a final project submission for CS50x 2021 and as a personal reminder to commit to finish the things I start.
+
+### To-dos
+- [x] Prompt user for configuration
+- [x] Convert relevant DAT to CSV
+- [x] Calculate averages of each CSV
+- [x] Graph out averages (x-axis: day/month, y-axis: value)
