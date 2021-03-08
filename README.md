@@ -2,7 +2,7 @@
 #### Video Demo: [https://youtu.be/E5cMcW69Uc0](https://youtu.be/E5cMcW69Uc0)
 #### Description:
 
-*I'm not sure where that crazy indentation came from once the conversion finished.* ¯\\_(ツ)_/¯
+*Video Note: I'm not sure where that crazy indentation came from once the conversion finished.* ¯\\_(ツ)_/¯
 
 This command-line program automates the process of organizing and synthesizing a large volume of data (i.e., thousands of .DAT files) into meaningful graphs — work that was previously done manually and tediously.
 
