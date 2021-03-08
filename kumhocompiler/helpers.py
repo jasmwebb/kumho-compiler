@@ -87,7 +87,7 @@ def convert_setup(dirname, hr):
     of files to convert for logging.
     """
     # Create a directory for the converted files if it doesn't already exist
-    csv_dir = f"{dirname} CSV {hr if hr >= 10 else f'0{hr}'}"
+    csv_dir = f"{dirname} CSV {hr if hr >= 10 else f'0{hr}'}00"
 
     try:
         os.mkdir(csv_dir)
