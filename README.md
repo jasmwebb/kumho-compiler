@@ -2,6 +2,8 @@
 #### Video Demo: [https://youtu.be/E5cMcW69Uc0](https://youtu.be/E5cMcW69Uc0)
 #### Description:
 
+*I'm not sure where that crazy indentation came from once the conversion finished.* ¯\\_(ツ)_/¯
+
 This command-line program automates the process of organizing and synthesizing a large volume of data (i.e., thousands of .DAT files) into meaningful graphs — work that was previously done manually and tediously.
 
 It was intended for use only by **Kumho Eng, Inc.**, and thus was written in a way that was catered to the use of their associates and the developer.
@@ -24,7 +26,7 @@ Alternatively, [follow matplotlib's installation instructions](https://matplotli
 
 # History
 
-This endeavor began in 2019 as a project not only to eliminate the tedium of my partner's job, but also to satisfy the final project requirement of CS50x and thus cement my growth as a budding software engineer.
+This endeavor began in 2019 as a project not only to eliminate the tedium of my partner's job, but also to satisfy the final project requirement of [CS50x](https://cs50.harvard.edu/x/) and thus cement my growth as a budding software engineer.
 
 In its previous "production" state, the program worked as expected on the small sample set I used to test during development, but undesirably froze up when run on the thousands of files it was intended to process. Feeling as though I needed to step back and re-evaluate my design, I put the project on hold, but I didn't anticipate that the hiatus would be two years long.
 
