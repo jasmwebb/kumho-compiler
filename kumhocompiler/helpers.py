@@ -87,7 +87,7 @@ def convert_setup(dirname, hr):
     of files to convert for logging.
     """
     # Create a directory for the converted files if it doesn't already exist
-    csv_dir = f"{dirname} CSV"
+    csv_dir = f"{dirname} CSV {hr if hr >= 10 else f'0{hr}'}"
 
     try:
         os.mkdir(csv_dir)
@@ -109,7 +109,7 @@ def convert_setup(dirname, hr):
     def interpolate_args(filename):
         """Interpolates given filename into list of command line arguments for
         subprocess.run
-        "FTViewFileViewer.exe" /sd FILE ../CSV DIRNAME/FILENAME.csv
+        ../FTViewFileViewer.exe /sd FILE ../CSV DIRNAME/FILENAME.csv
         """
         ftview = os.path.normpath("../FTViewFileViewer.exe")
         dest = os.path.normpath(f"../{csv_dir}/{filename.rstrip('.DAT')}.csv")
@@ -120,7 +120,7 @@ def convert_setup(dirname, hr):
     return map(interpolate_args, files), csv_dir, len(files)
 
 
-def plot_averages(data, root_dir, dirname, hr):
+def plot_averages(data, root_dir, dirname, hr, str_hr):
     """Plots and saves a time series from given data."""
     print("\n📏 Plotting data... ")
 
@@ -149,8 +149,7 @@ def plot_averages(data, root_dir, dirname, hr):
     ax.xaxis.set_major_formatter(months_format)
 
     # Save plot
-    hour = hr if hr >= 10 else f"0{hr}"
-    fig_name = f"{dirname} {hour}00.png"
+    fig_name = f"{dirname} {hr if hr >= 10 else f'0{hr}'}00.png"
     plt.savefig(os.path.normpath(f"{root_dir}/{fig_name}"))
 
     print(f"📈 Done!\n💾 {fig_name} saved to {root_dir}")
