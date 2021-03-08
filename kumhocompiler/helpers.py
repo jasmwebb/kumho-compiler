@@ -1,20 +1,44 @@
-#!/usr/bin/env python3
-"""
-Automates organizing and synthesizing data into meaningful graphs.
-"""
 import os
 
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from csv import DictReader
 from datetime import date
 from matplotlib import pyplot as plt
 from statistics import mean, StatisticsError
-from subprocess import run
-from time import time
+
+
+def calc_avg(filename):
+    """Calculates the average of all the values in a given CSV. Returns the
+    CSV's date and the average.
+    """
+    _yyyy, _m, _d, *_ = filename.split()
+    file_date = date(int(_yyyy), int(_m), int(_d))
+
+    with open(filename, "r") as csv_file:
+        reader = DictReader(csv_file)
+
+        try:
+            avg = mean(float(row["Value"]) for row in reader)
+        except StatisticsError:
+            # Empty CSV
+            avg = 0
+
+    return file_date, avg
 
 
 def configure():
     """Configures application to user's needs."""
+
+    # Configure target directory
+    dirs = tuple(_dir for _dir in os.listdir()
+                 if os.path.isdir(_dir) and not _dir.endswith("CSV"))
+    target_dir = None
+
+    print("📁 Select directory to analyze:")
+
+    for i, _dir in enumerate(dirs):
+        print(f"\t{i} | {_dir}")
+
+    # ----- LOCAL FUNCTION -----
     def validate_input(user_input, upper_bound):
         """Validates the user's input."""
         try:
@@ -33,16 +57,7 @@ def configure():
             return None
 
         return user_input
-
-    # Configure target directory
-    dirs = tuple(_dir for _dir in os.listdir()
-                 if os.path.isdir(_dir) and not _dir.endswith("CSV"))
-    target_dir = None
-
-    print("📁 Select directory to analyze:")
-
-    for i, _dir in enumerate(dirs):
-        print(f"\t{i} | {_dir}")
+    # ----- END LOCAL FUNCTION -----
 
     while target_dir is None:
         ans = input("> ")
@@ -88,6 +103,7 @@ def convert_setup(dirname, hr):
     files = tuple(file for file in os.listdir()
                   if file.endswith(f"{hr} (Float).DAT"))
 
+    # ----- LOCAL FUNCTION -----
     def interpolate_args(filename):
         """Interpolates given filename into list of command line arguments for
         subprocess.run
@@ -97,27 +113,9 @@ def convert_setup(dirname, hr):
         dest = os.path.normpath(f"../{csv_dir}/{filename.rstrip('.DAT')}.csv")
 
         return [ftview, "/sd", filename, dest]
+    # ----- END LOCAL FUNCTION -----
 
     return map(interpolate_args, files), csv_dir, len(files)
-
-
-def calc_avg(filename):
-    """Calculates the average of all the values in a given CSV. Returns the
-    CSV's date and the average.
-    """
-    _yyyy, _m, _d, *_ = filename.split()
-    file_date = date(int(_yyyy), int(_m), int(_d))
-
-    with open(filename, "r") as csv_file:
-        reader = DictReader(csv_file)
-
-        try:
-            avg = mean(float(row["Value"]) for row in reader)
-        except StatisticsError:
-            # Empty CSV
-            avg = 0
-
-    return file_date, avg
 
 
 def plot_averages(data, root_dir, dirname, hr):
@@ -145,48 +143,3 @@ def plot_averages(data, root_dir, dirname, hr):
     plt.savefig(os.path.normpath(f"{root_dir}/{fig_name}"))
 
     print(f"📈 Done!\n💾 {fig_name} saved to {root_dir}")
-
-
-def main():
-    """Main entry point"""
-
-    # CONFIGURE app
-    root = os.getcwd()
-    target_dir, target_hr = configure()
-
-    # CONVERT specified files to CSV
-    cmds, csvs, num_files = convert_setup(target_dir, target_hr)
-
-    print(f"\n🌱 Converting {num_files} files to CSV... "
-          "(This may take a minute.)")
-
-    start_time = time()
-
-    # -- Run the commands concurrently
-    with ThreadPoolExecutor() as executor:
-        executor.map(run, cmds)
-
-    print(f"🌼 Done! ({int(time() - start_time)} seconds)")
-
-    # CALCULATE average of each CSV
-    os.chdir(os.path.normpath(f"../{csvs}"))
-    csvs = os.listdir()
-
-    print("\n🧮 Calculating averages... ")
-
-    start_time = time()
-
-    # -- Calculate concurrently
-    with ProcessPoolExecutor() as executor:
-        avgs = executor.map(calc_avg, csvs)
-        data = {_date: _avg for _date, _avg in avgs}
-
-    print(f"📋 Done! ({int(time() - start_time)} seconds)")
-
-    # PLOT averages
-    plot_averages(data, root, target_dir, target_hr)
-
-
-if __name__ == "__main__":
-    # os.chdir("data")  # DEV
-    main()
