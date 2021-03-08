@@ -3,7 +3,7 @@ This command-line program automates the process of organizing and synthesizing a
 It was intended for use only by **Kumho Eng, Inc.**, and thus was written in a way that was catered to the use of their associates and the developer.
 
 # Usage
-## Install dependencies
+### Install dependencies
 Before running the script, you need to have its dependencies (namely `matplotlib`) installed locally (and preferably in a virtual environment).
 
 From within the same directory containing `requirements.txt` run :
@@ -13,12 +13,12 @@ pip install -r requirements.txt
 
 Alternatively, [follow matplotlib's installation instructions](https://matplotlib.org/stable/users/installing.html).
 
-## Running the script
+### Running the script
 1. Ensure `FTViewFileViewer.exe` is in the directory containing all other data directories.
 2. Place the `kumhocompiler` directory inside the same directory.
 3. Run `python kumhocompiler` from within that directory and follow the on-screen prompts.
 
-## History
+# History
 
 This endeavor began in 2019 as a project not only to eliminate the tedium of my partner's job, but also to satisfy the final project requirement of CS50x and thus cement my growth as a budding software engineer.
 

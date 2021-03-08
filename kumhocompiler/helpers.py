@@ -3,6 +3,7 @@ import os
 from csv import DictReader
 from datetime import date
 from matplotlib import pyplot as plt
+from matplotlib.dates import DateFormatter, MonthLocator
 from statistics import mean, StatisticsError
 
 
@@ -17,10 +18,11 @@ def calc_avg(filename):
         reader = DictReader(csv_file)
 
         try:
-            avg = mean(float(row["Value"]) for row in reader)
+            avg = abs(mean(float(row["Value"]) for row in reader))
+            avg = avg if avg <= 300 else None
         except StatisticsError:
             # Empty CSV
-            avg = 0
+            avg = None
 
     return file_date, avg
 
@@ -131,15 +133,24 @@ def plot_averages(data, root_dir, dirname, hr):
 
     # Style, plot, add information
     plt.style.use("seaborn-pastel")
-    plt.plot_date(x, y, linestyle="solid")
-    plt.gcf().autofmt_xdate()
-    plt.title(f"{dirname} - {hour} {am_pm} Averages")
-    plt.xlabel("Date")
+
+    fig, ax = plt.subplots(1, 1, figsize=(12.8, 9.6))
+
+    ax.plot_date(x, y, linestyle="solid", marker=None)
+
+    plt.title(f"{dirname} - {hour} {am_pm}")
+    plt.xlabel("Date", fontsize=12)
     plt.ylabel("Value")
 
+    plt.xticks(rotation=45)
+    months = MonthLocator()
+    months_format = DateFormatter("%b %Y")
+    ax.xaxis.set_major_locator(months)
+    ax.xaxis.set_major_formatter(months_format)
+
     # Save plot
-    data_items = tuple(data.items())
-    fig_name = f"{dirname} ({data_items[0][0]} {data_items[-1][0]}).png"
+    hour = hr if hr >= 10 else f"0{hr}"
+    fig_name = f"{dirname} {hour}00.png"
     plt.savefig(os.path.normpath(f"{root_dir}/{fig_name}"))
 
     print(f"📈 Done!\n💾 {fig_name} saved to {root_dir}")

@@ -43,7 +43,7 @@ def main():
     # -- Calculate concurrently
     with ProcessPoolExecutor() as executor:
         avgs = executor.map(calc_avg, csvs)
-        data = {_date: _avg for _date, _avg in avgs}
+        data = {_date: _avg for _date, _avg in avgs if _avg is not None}
 
     print(f"📋 Done! ({int(time() - start_time)} seconds)")
 
@@ -52,5 +52,5 @@ def main():
 
 
 if __name__ == "__main__":
-    # os.chdir("data")  # DEV
+    os.chdir("data")  # DEV
     main()
