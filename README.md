@@ -3,7 +3,9 @@ This command-line program automates the process of organizing and synthesizing a
 It was intended for use only by **Kumho Eng, Inc.**, and thus was written in a way that was catered to the use of their associates and the developer.
 
 # Usage
-TODO
+1. Ensure `FTViewFileViewer.exe` is in the directory containing all other data directories.
+2. Place the `kumhocompiler` directory inside the same directory.
+3. Run `python kumhocompiler` from within that directory and follow the on-screen prompts.
 
 ## To-dos
 - [x] Prompt user for configuration
